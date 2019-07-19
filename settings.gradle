@@ -1,0 +1,6 @@
+//多项目构建管理文件
+rootProject.name = 'todo'
+include 'model'
+include 'repository'
+include 'web'
+

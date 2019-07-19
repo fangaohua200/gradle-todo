@@ -1,0 +1,77 @@
+//两种方式 统一配置version  ext and gradle.properties
+//group 'com.lenovo'
+//version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+//0.所有子项目统一配置java插件 ，设置到子模块
+allprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.8
+    //10.配置发布：
+    apply plugin: 'maven-publish'
+    publishing {
+        publications {
+            myPublish(MavenPublication){
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                name "myRepo"
+                url ""
+            }
+        }
+    }
+}
+
+//9.给所有子模块配置logback
+subprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+    }
+}
+
+//1.配置脚本冲突是构建失败
+configurations.all{
+    resolutionStrategy{
+        failOnVersionConflict()
+        //3.hibernate  log4j冲突解决。
+        force 'org.slf4j:slf4j-api:1.7.24'
+    }
+}
+dependencies {
+    //testRuntime
+    // 2.hibernate  log4j冲突解决。
+    compile (group: 'org.hibernate', name: 'hibernate-core', version: '3.6.3.Final') {
+        exclude group: 'org.slf4j',module:'slf4j-api'
+    }
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+//4.自定义任务
+def createDir={
+    path->
+        File dir=new File(path);
+        if(!dir.exists()){
+            dir.mkdirs()
+        }
+}
+
+task makeNewDir(){
+    //5.dependson:
+    def path =['src/main/newdir','src/main/newdir/newchild']
+    doFirst {
+        path.forEach(createDir);
+    }
+    //path.forEach(createDir);
+}

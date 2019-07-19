@@ -1,0 +1,18 @@
+//plugins {
+//    id 'java'
+//}
+
+//group 'com.lenovo'
+//version '1.0-SNAPSHOT'
+
+//sourceCompatibility = 1.8
+
+//注释的都是放到父类中了
+//repositories {
+//    mavenCentral()
+//}
+
+dependencies {
+    compile project(':model')
+//    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
